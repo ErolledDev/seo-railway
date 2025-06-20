@@ -22,9 +22,8 @@ const nextConfig = {
     ignoreDuringBuilds: false,
   },
   
-  // Experimental features for performance - DISABLED optimizeCss for Amplify compatibility
+  // Experimental features for performance
   experimental: {
-    // optimizeCss: true, // Disabled - causes critters dependency issues in Amplify
     optimizePackageImports: ['react-icons'],
     serverComponentsExternalPackages: [],
   },
@@ -167,22 +166,6 @@ const nextConfig = {
       },
     ]
   },
-
-  // Bundle analyzer (only in development)
-  ...(process.env.ANALYZE === 'true' && {
-    webpack: (config, { isServer }) => {
-      if (!isServer) {
-        const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
-        config.plugins.push(
-          new BundleAnalyzerPlugin({
-            analyzerMode: 'static',
-            openAnalyzer: false,
-          })
-        )
-      }
-      return config
-    },
-  }),
 }
 
 module.exports = nextConfig
