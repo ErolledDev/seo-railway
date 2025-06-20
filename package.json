@@ -8,14 +8,11 @@
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
-    "build": "rm -rf .next && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint --fix",
     "lint:check": "next lint --max-warnings 0",
-    "type-check": "tsc --noEmit",
-    "analyze": "ANALYZE=true npm run build",
-    "clean": "rm -rf .next out node_modules/.cache",
-    "export": "echo 'Export disabled - SSR app only' && exit 1"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "next": "14.2.5",
