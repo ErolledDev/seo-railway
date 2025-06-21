@@ -1,21 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-<<<<<<< HEAD
 import { storage } from '../../../lib/storage'
-=======
-import { promises as fs } from 'fs'
-import path from 'path'
->>>>>>> dfbe932bf1112279626141a25cb1b9aa41ff07e1
 
 interface FormData {
   title: string
   desc: string
   url: string
   image: string
-<<<<<<< HEAD
   video?: string
-=======
-  video?: string // Added video field
->>>>>>> dfbe932bf1112279626141a25cb1b9aa41ff07e1
   keywords: string
   site_name: string
   type: string
@@ -27,11 +18,7 @@ interface RedirectData {
   desc: string
   url: string
   image: string
-<<<<<<< HEAD
   video?: string
-=======
-  video?: string // Added video field
->>>>>>> dfbe932bf1112279626141a25cb1b9aa41ff07e1
   keywords: string
   site_name: string
   type: string
@@ -39,7 +26,6 @@ interface RedirectData {
   updated_at: string
 }
 
-<<<<<<< HEAD
 interface CreateRedirectResponse {
   long: string
   short: string
@@ -49,10 +35,6 @@ interface CreateRedirectResponse {
   error?: string
   data?: RedirectData
   isUpdate?: boolean
-=======
-interface RedirectsData {
-  [slug: string]: RedirectData
->>>>>>> dfbe932bf1112279626141a25cb1b9aa41ff07e1
 }
 
 export async function POST(request: NextRequest) {
@@ -90,112 +72,11 @@ export async function POST(request: NextRequest) {
     
     console.log('Generated slug:', slug)
     
-<<<<<<< HEAD
     // Check if slug already exists (for new redirects, not updates)
     const existingRedirect = await storage.getRedirect(slug)
     const isUpdate = data.slug && existingRedirect
     
     if (!isUpdate && existingRedirect) {
-=======
-    // Try multiple file path strategies for AWS Amplify
-    const possiblePaths = [
-      path.join(process.cwd(), 'redirects.json'),
-      path.join('/tmp', 'redirects.json'),
-      './redirects.json',
-      'redirects.json'
-    ]
-    
-    let filePath = ''
-    let redirects: RedirectsData = {}
-    let fileExists = false
-    
-    // Try to find and read existing file
-    for (const testPath of possiblePaths) {
-      try {
-        console.log(`Trying to read from: ${testPath}`)
-        await fs.access(testPath)
-        const fileContents = await fs.readFile(testPath, 'utf8')
-        redirects = JSON.parse(fileContents) as RedirectsData
-        filePath = testPath
-        fileExists = true
-        console.log(`Successfully read from: ${testPath}`)
-        break
-      } catch (error) {
-        console.log(`Failed to read from ${testPath}:`, error instanceof Error ? error.message : 'Unknown error')
-        continue
-      }
-    }
-    
-    // If no existing file found, try to create in writable location
-    if (!fileExists) {
-      console.log('No existing file found, trying to create new one')
-      
-      // Try /tmp first (most likely to work in serverless)
-      const tmpPath = path.join('/tmp', 'redirects.json')
-      try {
-        await fs.writeFile(tmpPath, '{}', 'utf8')
-        filePath = tmpPath
-        console.log(`Created new file at: ${tmpPath}`)
-      } catch (tmpError) {
-        console.log('Failed to create in /tmp:', tmpError instanceof Error ? tmpError.message : 'Unknown error')
-        
-        // Fallback to current directory
-        const cwdPath = path.join(process.cwd(), 'redirects.json')
-        try {
-          await fs.writeFile(cwdPath, '{}', 'utf8')
-          filePath = cwdPath
-          console.log(`Created new file at: ${cwdPath}`)
-        } catch (cwdError) {
-          console.error('Failed to create file in any location:', cwdError)
-          
-          // If we can't write files, return the data anyway for client-side handling
-          const currentTime = new Date().toISOString()
-          const redirectData: RedirectData = {
-            title: data.title.trim(),
-            desc: data.desc.trim(),
-            url: data.url.trim(),
-            image: data.image ? data.image.trim() : '',
-            video: data.video ? data.video.trim() : '', // Include video
-            keywords: data.keywords ? data.keywords.trim() : '',
-            site_name: data.site_name ? data.site_name.trim() : '',
-            type: data.type || 'website',
-            created_at: currentTime,
-            updated_at: currentTime
-          }
-          
-          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
-          const params = new URLSearchParams({
-            title: redirectData.title,
-            desc: redirectData.desc,
-            url: redirectData.url,
-            ...(redirectData.image && { image: redirectData.image }),
-            ...(redirectData.video && { video: redirectData.video }), // Include video in params
-            ...(redirectData.keywords && { keywords: redirectData.keywords }),
-            ...(redirectData.site_name && { site_name: redirectData.site_name }),
-            type: redirectData.type
-          })
-          
-          const longUrl = `${baseUrl}/u?${params.toString()}`
-          const shortUrl = `${baseUrl}/${slug}`
-          
-          console.log('Returning URLs without file persistence due to file system restrictions')
-          
-          return NextResponse.json({
-            long: longUrl,
-            short: shortUrl,
-            slug: slug,
-            success: true,
-            warning: 'Data not persisted due to file system restrictions in serverless environment',
-            data: redirectData
-          })
-        }
-      }
-    }
-    
-    // Check if slug already exists (for new redirects, not updates)
-    const isUpdate = data.slug && redirects[slug]
-    if (!isUpdate && redirects[slug]) {
->>>>>>> dfbe932bf1112279626141a25cb1b9aa41ff07e1
       slug = `${slug}-${Date.now()}`
       console.log('Slug collision, using:', slug)
     }
@@ -207,7 +88,6 @@ export async function POST(request: NextRequest) {
       desc: data.desc.trim(),
       url: data.url.trim(),
       image: data.image ? data.image.trim() : '',
-<<<<<<< HEAD
       video: data.video ? data.video.trim() : '',
       keywords: data.keywords ? data.keywords.trim() : '',
       site_name: data.site_name ? data.site_name.trim() : '',
@@ -218,52 +98,6 @@ export async function POST(request: NextRequest) {
     
     // Save redirect using storage class
     await storage.saveRedirect(slug, redirectData)
-=======
-      video: data.video ? data.video.trim() : '', // Include video
-      keywords: data.keywords ? data.keywords.trim() : '',
-      site_name: data.site_name ? data.site_name.trim() : '',
-      type: data.type || 'website',
-      created_at: isUpdate ? (redirects[slug]?.created_at || currentTime) : currentTime,
-      updated_at: currentTime
-    }
-    
-    // Add or update redirect
-    redirects[slug] = redirectData
-    console.log('Updated redirects object, total entries:', Object.keys(redirects).length)
-    
-    // Try to write back to file
-    try {
-      await fs.writeFile(filePath, JSON.stringify(redirects, null, 2), 'utf8')
-      console.log(`Successfully wrote to: ${filePath}`)
-    } catch (writeError) {
-      console.error('Failed to write file:', writeError)
-      
-      // Even if write fails, return the URLs
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
-      const params = new URLSearchParams({
-        title: redirectData.title,
-        desc: redirectData.desc,
-        url: redirectData.url,
-        ...(redirectData.image && { image: redirectData.image }),
-        ...(redirectData.video && { video: redirectData.video }), // Include video in params
-        ...(redirectData.keywords && { keywords: redirectData.keywords }),
-        ...(redirectData.site_name && { site_name: redirectData.site_name }),
-        type: redirectData.type
-      })
-      
-      const longUrl = `${baseUrl}/u?${params.toString()}`
-      const shortUrl = `${baseUrl}/${slug}`
-      
-      return NextResponse.json({
-        long: longUrl,
-        short: shortUrl,
-        slug: slug,
-        success: true,
-        warning: 'Redirect created but not persisted due to file system restrictions',
-        data: redirectData
-      })
-    }
->>>>>>> dfbe932bf1112279626141a25cb1b9aa41ff07e1
     
     // Generate URLs
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
@@ -272,11 +106,7 @@ export async function POST(request: NextRequest) {
       desc: redirectData.desc,
       url: redirectData.url,
       ...(redirectData.image && { image: redirectData.image }),
-<<<<<<< HEAD
       ...(redirectData.video && { video: redirectData.video }),
-=======
-      ...(redirectData.video && { video: redirectData.video }), // Include video in params
->>>>>>> dfbe932bf1112279626141a25cb1b9aa41ff07e1
       ...(redirectData.keywords && { keywords: redirectData.keywords }),
       ...(redirectData.site_name && { site_name: redirectData.site_name }),
       type: redirectData.type
@@ -302,31 +132,6 @@ export async function POST(request: NextRequest) {
     console.error('Error details:', error)
     console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace')
     
-<<<<<<< HEAD
-=======
-    // Provide more specific error messages
-    if (error instanceof SyntaxError) {
-      return NextResponse.json(
-        { error: 'Invalid JSON data provided', details: error.message },
-        { status: 400 }
-      )
-    }
-    
-    if (error instanceof Error && error.message.includes('ENOENT')) {
-      return NextResponse.json(
-        { error: 'File system access denied. Serverless environment restrictions.', details: error.message },
-        { status: 500 }
-      )
-    }
-    
-    if (error instanceof Error && error.message.includes('EACCES')) {
-      return NextResponse.json(
-        { error: 'Permission denied. File system not writable in serverless environment.', details: error.message },
-        { status: 500 }
-      )
-    }
-    
->>>>>>> dfbe932bf1112279626141a25cb1b9aa41ff07e1
     return NextResponse.json(
       { 
         error: 'Failed to create redirect. Please try again.', 
