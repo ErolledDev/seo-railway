@@ -12,8 +12,7 @@
     "start": "next start",
     "lint": "next lint --fix",
     "lint:check": "next lint --max-warnings 0",
-    "type-check": "tsc --noEmit",
-    "postinstall": "npm run build"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "next": "14.2.5",
